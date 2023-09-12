@@ -15,6 +15,7 @@ dependencies {
 
 	implementation("id.walt:waltid-ssikit:${Versions.waltIdSsiKit}") {
 		exclude("io.javalin", "javalin")
+		exclude("org.slf4j", "slf4j-simple")
 	}
 	implementation("id.walt.servicematrix:WaltID-ServiceMatrix:1.1.3")
 
