@@ -1,0 +1,8 @@
+version: "3.3"
+
+services:
+  token-helper:
+    image: smartbcity/token-helper:0.1
+    container_name: token-helper
+    ports:
+      - "8090:8090"

@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    container_name: keycloak
+    hostname: did.fiware.smart-b.io
+    environment:
+      KC_DB_URL: "jdbc:postgresql://${POSTGRES_HOST}/${POSTGRES_KEYCLOAK_DB}"
+      KC_DB_PASSWORD: ${POSTGRES_PASS}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_HOSTNAME: ${AUTH_HOST_NAME}
+      KEYCLOAK_FRONTEND_URL: "https://${AUTH_HOST_NAME}"
+      KEYCLOAK_ADMIN: ${KC_ROOT_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ROOT_PASS}
+      KC_DB_SCHEMA: "public"
+      KC_PROXY: "edge"
+      KC_HOSTNAME_STRICT_HTTPS: "true"
+      PROXY_ADDRESS_FORWARDING: "true"
+      JDBC_PARAMS: "ssl=false"
+      LETSENCRYPT_HOST: ${AUTH_HOST_NAME},tmp.${AUTH_HOST_NAME}
+      VIRTUAL_HOST: ${AUTH_HOST_NAME},tmp.${AUTH_HOST_NAME}
+      VIRTUAL_PORT: 8080
+
+networks:
+  default:
+    external:
+      name: ${DOCKER_NETWORK_NAME}

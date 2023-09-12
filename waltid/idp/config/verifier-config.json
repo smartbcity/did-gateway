@@ -1,0 +1,15 @@
+{
+  "verifierUiUrl": "https://idp.did.smart-b.io/verifier-api",
+  "verifierApiUrl": "https://idp.did.smart-b.io/api/siop/default",
+  "additionalPolicies": [
+  ],
+  "wallets": {
+    "walt.id": {
+      "id": "walt.id",
+      "url": "https://wallet.walt.id",
+      "presentPath": "api/siop/initiatePresentation/",
+      "receivePath" : "api/siop/initiateIssuance/",
+      "description": "walt.id web wallet"
+    }
+  }
+}

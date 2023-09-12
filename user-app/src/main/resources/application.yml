@@ -1,0 +1,41 @@
+server:
+  port: 8090
+
+verifier:
+  address: http://localhost:7070
+  did: did:key:z6MksU6tMfbaDzvaRe5oFE4eZTVTV4HJM4fmQWWGsDGQVsEr
+
+wallet:
+  address: http://localhost:7080
+
+idp:
+  url: http://localhost:8091
+  client-id: t5-fH_TdFT9NHJ3_zxD9Nt-zz2f-6t2VQ1WS6Ob-xsY
+  client-secret: ***REMOVED***
+
+walletbis: http://localhost:8092
+
+target-idp:
+  url: http://localhost:8080
+  realm: test
+  client-id: test-client
+  client-secret: ***REMOVED***
+
+
+#idp:
+#  url: https://idp.did.smart-b.io
+#  client-id: 30yxY8xfiUhUZ7BvY2HDlvaWI61MkInUpxb9279LUVM
+#  client-secret: ***REMOVED***
+#
+#walletbis: https://wallet.did.smart-b.io
+#
+#target-idp:
+#  url: http://did.fiware.smart-b.io:8080
+#  realm: fiware-server
+#  client-id: token-exchange
+#  client-secret: ***REMOVED***
+
+
+# Issuer service config
+issuer:
+  url: https://wallet.did.smart-b.io

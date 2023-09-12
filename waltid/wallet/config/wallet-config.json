@@ -1,0 +1,11 @@
+{
+  "walletUiUrl": "http://localhost:3000",
+  "walletApiUrl": "https://wallet.did.smart-b.io/api",
+  "issuers": {
+    "waltid": {
+      "id": "waltid",
+      "url": "https://wallet.did.smart-b.io/issuer-api/default/oidc",
+      "description": "walt.id Issuer Portal"
+    }
+  }
+}

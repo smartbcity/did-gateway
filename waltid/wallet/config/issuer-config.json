@@ -1,0 +1,14 @@
+{
+  "issuerUiUrl": "https://wallet.did.smart-b.io",
+  "issuerApiUrl": "https://wallet.did.smart-b.io/issuer-api/default",
+  "credentialTypes": [ "VerifiableId" ],
+  "wallets": {
+    "waltid": {
+      "id": "waltid",
+      "url": "https://wallet.did.smart-b.io",
+      "presentPath": "api/siop/initiatePresentation/",
+      "receivePath" : "api/siop/initiateIssuance/",
+      "description": "walt.id web wallet"
+    }
+  }
+}
