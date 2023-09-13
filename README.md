@@ -1,3 +1,80 @@
+# Current status
+
+Issuing credential using IssuerService does not work yet.
+To issue credential, use directly the wallet API
+
+## Generate an auth token
+
+```
+curl --location 'http://localhost:8092/api/auth/login' \
+--header 'Content-Type: application/json' \
+--data '{
+    "id": "user3"
+}'
+```
+
+## Issue credential
+```
+curl --location --globoff --request PUT 'http://localhost:8092/api/wallet/credentials/{alias}' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMyJ9.R9r2GSwm3IE_6KrK55OJS4J7aoLcXokM3xMwiqYrFOI' \
+--data-raw '{
+      "type": [
+        "VerifiableCredential",
+        "VerifiableAttestation",
+        "VerifiableId"
+      ],
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1"
+      ],
+      "id": "urn:uuid:f4b89b19-db18-4e4d-a52d-d5010a504986",
+      "issuer": "did:key:z6MkggWY7dCwsyiy3BoFammkpzZLuA1h9MyhUKtFHCTQDpS8",
+      "issuanceDate": "2023-09-01T13:15:19Z",
+      "issued": "2023-09-01T13:15:19Z",
+      "validFrom": "2023-09-01T13:15:19Z",
+      "credentialSchema": {
+        "id": "https://raw.githubusercontent.com/walt-id/waltid-ssikit-vclib/master/src/test/resources/schemas/VerifiableId.json",
+        "type": "FullJsonSchemaValidator2021"
+      },
+      "credentialSubject": {
+        "id": "did:key:z6MknTNsZxwni1Eq47Q5HKDy5Tr7nCxskxYrLPeJPdzeNfSZ",
+        "currentAddress": [
+          "1 Boulevard de la Liberté, 59800 Lille"
+        ],
+        "dateOfBirth": "1993-04-08",
+        "familyName": "DOE",
+        "firstName": "Teddy",
+        "gender": "FEMALE",
+        "nameAndFamilyNameAtBirth": "Jane DOE",
+        "personalIdentifier": "0904008084H",
+        "placeOfBirth": "LILLE, FRANCE"
+      },
+      "evidence": [
+        {
+          "documentPresence": [
+            "Physical"
+          ],
+          "evidenceDocument": [
+            "Passport"
+          ],
+          "subjectPresence": "Physical",
+          "type": [
+            "DocumentVerification"
+          ],
+          "verifier": "did:ebsi:2A9BZ9SUe6BatacSpvs1V5CdjHvLpQ7bEsi2Jb6LdHKnQxaN"
+        }
+      ]
+    }'
+```
+
+Use the previously generated token as bearer token.
+The credentialSubject.id must match the user did.
+
+### Get user did
+```
+curl --location 'http://localhost:8090/getdid?id=user3'
+```
+
 # Token helper
 
 ## Keycloak config
