@@ -165,7 +165,7 @@ spec:
     spec:
       containers:
         - name: idpkit
-          image: teddysmartb/smartb-idpkit:latest
+          image: smartbcity/smartb-idp:0.0.1
           volumeMounts:
             - name: idp-config
               mountPath: "/waltid/idp/config/"
