@@ -1,0 +1,54 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: did-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: did-gateway
+  template:
+    metadata:
+      labels:
+        app: did-gateway
+      annotations:
+        deployment/id: "_DEFAULT_DEPLOYMENT_"
+    spec:
+      containers:
+        - name: did-gateway
+          image: smartbcity/did-gateway:0.0.8
+          imagePullPolicy: Always
+          env:
+            - name: IDP_URL
+              value: "http://idpkit:8091"
+            - name: IDP_CLIENT-ID
+              value: "gmFCjHus-IMs1fbZ24fMQP7-Bb78UC-tV8DvzmQac30"
+            - name: IDP_CLIENT-SECRET
+              value: "6qI6eH5sT3AEj_Cu2CIg0lvgqlcK8_8T8bJdlLSJ-KQ"
+            - name: WALLET_URL
+              value: "http://walletkit:8092"
+            - name: ISSUER_URL
+              value: "http://walletkit:8092"
+            - name: TARGET-IDP_URL
+              value: "http://host.minikube.internal:8080"
+            - name: TARGET-IDP_REALM
+              value: "test"
+            - name: TARGET-IDP_CLIENT-ID
+              value: "test-client"
+            - name: TARGET-IDP_CLIENT-SECRET
+              value: "***REMOVED***"
+          ports:
+            - containerPort: 8090
+              name: http-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: did-gateway
+spec:
+  selector:
+    app: did-gateway
+  ports:
+    - port: 8090
+      targetPort: 8090
+  type: LoadBalancer

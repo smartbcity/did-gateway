@@ -1,8 +1,0 @@
-version: "3.3"
-
-services:
-  did-gateway:
-    image: smartbcity/did-gateway:experimental
-    container_name: did-gateway
-    ports:
-      - "8090:8090"

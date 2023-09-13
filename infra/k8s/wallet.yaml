@@ -5,13 +5,13 @@ metadata:
 data:
   issuer-config.json: |
     {
-      "issuerUiUrl": "https://wallet.did.smart-b.io",
-      "issuerApiUrl": "https://wallet.did.smart-b.io/issuer-api/default",
+      "issuerUiUrl": "http://walletkit:8092",
+      "issuerApiUrl": "http://walletkit:8092/issuer-api/default",
       "credentialTypes": [ "VerifiableId" ],
       "wallets": {
         "waltid": {
           "id": "waltid",
-          "url": "https://wallet.did.smart-b.io",
+          "url": "http://walletkit:8092",
           "presentPath": "api/siop/initiatePresentation/",
           "receivePath" : "api/siop/initiateIssuance/",
           "description": "walt.id web wallet"
@@ -21,12 +21,12 @@ data:
 
   verifier-config.json: |
     {
-      "verifierUiUrl": "https://verifier.walt-test.cloud",
-      "verifierApiUrl": "https://verifier.walt-test.cloud/verifier-api/default",
+      "verifierUiUrl": "http://walletkit:8092",
+      "verifierApiUrl": "http://walletkit:8092/verifier-api/default",
       "wallets": {
         "walt.id": {
           "id": "walt.id",
-          "url": "https://wallet.walt-test.cloud",
+          "url": "http://walletkit:8092",
           "presentPath": "api/siop/initiatePresentation/",
           "receivePath" : "api/siop/initiateIssuance/",
           "description": "walt.id web wallet"
@@ -37,27 +37,16 @@ data:
   wallet-config.json: |
     {
       "walletUiUrl": "http://localhost:3000",
-      "walletApiUrl": "https://wallet.did.smart-b.io/api",
+      "walletApiUrl": "http://walletkit:8092/api",
       "issuers": {
         "waltid": {
           "id": "waltid",
-          "url": "https://wallet.did.smart-b.io/issuer-api/default/oidc",
+          "url": "http://walletkit:8092/issuer-api/default/oidc",
           "description": "walt.id Issuer Portal"
         }
       }
     }
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: wallet-data-volume-claim
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 10Gi
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -82,9 +71,6 @@ spec:
             - name: wallet-config
               mountPath: "/waltid/wallet/config/"
               readOnly: true
-            - name: issuers-secret
-              mountPath: "/waltid/wallet/secrets"
-              readOnly: true
             - mountPath: "/waltid/wallet/data/"
               name: wallet-data
           env:
@@ -94,6 +80,7 @@ spec:
               value: 0.0.0.0
           args:
             - run
+            - --bind-all
           ports:
             - containerPort: 8080
               name: http-api
@@ -101,180 +88,18 @@ spec:
         - name: wallet-config
           configMap:
             name: wallet-config
-        - name: issuers-secret
-          secret:
-            secretName: issuers-secret
         - name: wallet-data
           persistentVolumeClaim:
             claimName: wallet-data-volume-claim
 ---
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: walletkit
 spec:
-  ports:
-    - name: http
-      port: 80
-      targetPort: http-api
-      protocol: TCP
   selector:
     app: walletkit
----
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: verifier-portal
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: verifier-portal
-  template:
-    metadata:
-      labels:
-        app: verifier-portal
-      annotations:
-        deployment/id: "_DEFAULT_DEPLOYMENT_"
-    spec:
-      containers:
-        - name: ssikit-verifier-portal
-          image: waltid/ssikit-verifier-portal:latest
-          ports:
-            - containerPort: 80
-              name: http-api
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: verifier-portal
-spec:
   ports:
-    - name: http
-      port: 80
-      targetPort: http-api
-      protocol: TCP
-  selector:
-    app: verifier-portal
----
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: issuer-portal
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: issuer-portal
-  template:
-    metadata:
-      labels:
-        app: issuer-portal
-      annotations:
-        deployment/id: "_DEFAULT_DEPLOYMENT_"
-    spec:
-      containers:
-        - name: ssikit-issuer-portal
-          image: waltid/ssikit-issuer-portal:latest
-          ports:
-            - containerPort: 80
-              name: http-api
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: issuer-portal
-spec:
-  ports:
-    - name: http
-      port: 80
-      targetPort: http-api
-      protocol: TCP
-  selector:
-    app: issuer-portal
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: walletkit-ingress
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    ingress.kubernetes.io/configuration-snippet: |
-      if ($host ~ ^(.+)\.waltid\.org$) {
-        return 301 https://$1.walt-test.cloud$request_uri;
-      }
-spec:
-  tls:
-    - hosts:
-        - walletkit.walt-test.cloud
-        - verifier.walt-test.cloud
-        - issuer.walt-test.cloud
-        - verifier.howest.walt-test.cloud
-      secretName: walletkit-tls-secret
-  rules:
-    - host: walletkit.walt-test.cloud
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: walletkit
-                port:
-                  number: 80
-    - host: verifier.walt-test.cloud
-      http:
-        paths:
-          - path: /verifier-api/
-            pathType: Prefix
-            backend:
-              service:
-                name: walletkit
-                port:
-                  number: 80
-          - path: /api/
-            pathType: Prefix
-            backend:
-              service:
-                name: walletkit
-                port:
-                  number: 80
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: verifier-portal
-                port:
-                  number: 80
-    - host: issuer.walt-test.cloud
-      http:
-        paths:
-          - path: /issuer-api/
-            pathType: Prefix
-            backend:
-              service:
-                name: walletkit
-                port:
-                  number: 80
-          - path: /onboarding-api/
-            pathType: Prefix
-            backend:
-              service:
-                name: walletkit
-                port:
-                  number: 80
-          - path: /api/
-            pathType: Prefix
-            backend:
-              service:
-                name: walletkit
-                port:
-                  number: 80
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: issuer-portal
-                port:
-                  number: 80
+    - port: 8092
+      targetPort: 8080
+  type: LoadBalancer

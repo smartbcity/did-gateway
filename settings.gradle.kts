@@ -10,4 +10,4 @@ pluginManagement {
 rootProject.name = "did-gateway"
 
 
-include("user-app")
+include("app")

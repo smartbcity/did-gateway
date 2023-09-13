@@ -10,7 +10,7 @@ plugins {
 }
 
 allprojects {
-    group = "city.smartb.iris"
+    group = "city.smartb"
     version = System.getenv("VERSION") ?: "experimental-SNAPSHOT"
     repositories {
         mavenLocal()
