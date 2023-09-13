@@ -1,3 +1,10 @@
+# TODO
+
+- Add a keycloak to k8s infrastructure (or use EGM one's) and configure did-gateway according to the deployed keycloak instance
+- Use IssuerService to issue credential. It is based on OpenID4CI protocol.
+- Fix signature bug when using credential issued by IssuerService
+- Add authentication to wallet (it currently needs only a userId to authentify a user)
+
 # Current status
 
 Issuing credential using IssuerService does not work yet.
