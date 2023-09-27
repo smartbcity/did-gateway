@@ -1,0 +1,191 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: idp-config
+data:
+  verifier-config.json: |
+    {
+      "verifierUiUrl": "http://idpkit:8091/sharecredential?state=",
+      "verifierApiUrl": "http://idpkit:8091/api/siop/default",
+      "additionalPolicies": [
+      ],
+      "wallets": {
+        "walt.id": {
+          "id": "walt.id",
+          "url": "http://walletkit:8092",
+          "presentPath": "api/siop/initiatePresentation/",
+          "receivePath" : "api/siop/initiateIssuance/",
+          "description": "walt.id web wallet"
+        }
+      }
+    }
+  idp-config.json: |
+    {
+      "externalUrl": "http://idpkit:8091",
+      "jsProjectExternalUrl":"http://nftkit-js:80",
+      "fallbackAuthorizationMode": "SIOP",
+      "claimConfig": {
+        "vc_mappings": [
+          {
+            "scope": [ "gaiax" ],
+            "claim": "name",
+            "credentialType": "ParticipantCredential",
+            "valuePath": "$.credentialSubject.hasLegallyBindingName"
+          },
+          {
+            "scope": [ "gaiax" ],
+            "claim": "country",
+            "credentialType": "LegalPerson",
+            "valuePath": "$.credentialSubject.gx-participant:legalAddress.gx-participant:addressCountryCode"
+          },
+          {
+            "scope": [ "gaiax" ],
+            "claim": "name",
+            "credentialType": "ParticipantCredential",
+            "valuePath": "$.credentialSubject.hasLegallyBindingName"
+          },
+          {
+            "scope": [ "profile" ],
+            "claim": "name",
+            "credentialType": "ConnectIdCredential",
+            "valuePath": "$.credentialSubject.firstName $.credentialSubject.familyName"
+          },
+          {
+            "scope": [ "profile" ],
+            "claim": "family_name",
+            "credentialType": "ConnectIdCredential",
+            "valuePath": "$.credentialSubject.familyName"
+          },
+          {
+            "scope": [ "profile" ],
+            "claim": "given_name",
+            "credentialType": "ConnectIdCredential",
+            "valuePath": "$.credentialSubject.firstName"
+          },
+          {
+            "scope": [ "profile" ],
+            "claim": "userEmail",
+            "credentialType": "ConnectIdCredential",
+            "valuePath": "$.credentialSubject.email"
+          }
+        ],
+        "nft_mappings":  [
+          {
+            "scope": [ "award" ],
+            "claim": "awd",
+            "claimMappings": {
+              "EVM": {
+                "nftTokenConstraint": {
+                  "chain": "POLYGON",
+                  "smartContractAddress": "0x9bc4d80c7b77ecc7107eac3961cb1dd98930f2b2",
+                  "factorySmartContractAddress": ""
+                },
+                "trait": "award"
+              }
+            }
+          }
+        ],
+        "default_nft_token_claim": {
+          "ecosystems": [ "EVM", "TEZOS", "NEAR" ],
+          "nftTokenContraints": {
+            "EVM": {
+              "chain": "POLYGON",
+              "factorySmartContractAddress": "",
+              "smartContractAddress": "0x21dd9b1913d84ab295fdf19834b0b6824a5912ca",
+              "collectionPath": ""
+            },
+            "TEZOS": {
+              "chain": "GHOSTNET",
+              "factorySmartContractAddress": "",
+              "smartContractAddress": "KT1Rc59ukgW32e54aUdYqVzTM9gtHrA4JDYp",
+              "collectionPath": ""
+            },
+            "NEAR": {
+              "chain": "TESTNET",
+              "factorySmartContractAddress": "",
+              "smartContractAddress": "demo.khaled_lightency1.testnet",
+              "collectionPath": ""
+            },
+            "POLKADOT": {
+              "chain": "OPAL",
+              "factorySmartContractAddress": "",
+              "smartContractAddress": "1062",
+              "collectionPath": ""
+            },
+            "FLOW": {
+              "chain": "TESTNET",
+              "factorySmartContractAddress": "",
+              "smartContractAddress": "0xa9ccb9756a0ee7eb",
+              "collectionPath": "/public/exampleNFTCollection"
+            }
+          }
+        },
+        "default_nft_policy":{
+          "withPolicyVerification": false,
+          "policy": "",
+          "query": "",
+          "inputs": {
+            "Backgrounds": "Green"
+          }
+        },
+        "default_vp_token_claim": {
+          "presentation_definition": {
+            "id": "1",
+            "input_descriptors": [
+              {
+                "id": "1",
+                "constraints": {
+                  "fields": [
+                    {
+                      "id": "1",
+                      "path": [ "$.type" ],
+                      "filter": { "const":  "ConnectIdCredential" }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+---
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: idp-create-client
+spec:
+  completions: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: idp-create-client
+          image: smartbcity/smartb-idp:0.0.1
+          volumeMounts:
+            - name: idp-config
+              mountPath: "/waltid/idp/config/"
+              readOnly: true
+            - mountPath: "/waltid/idp/data/"
+              name: idp-data
+          env:
+            - name: WALTID_DATA_ROOT
+              value: "/waltid/idp"
+            - name: WALTID_CONFIG_PATH
+              value: "/waltid/idp/config/"
+          args:
+            - config
+            - --oidc
+            - clients
+            - register
+            - --all-redirect-uris
+          ports:
+            - containerPort: 8080
+              name: http-api
+      volumes:
+        - name: idp-config
+          configMap:
+            name: idp-config
+        - name: idp-data
+          persistentVolumeClaim:
+            claimName: idp-data-volume-claim
