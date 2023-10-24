@@ -1,6 +1,5 @@
 {
   "externalUrl": "https://idp.did.smart-b.io",
-  "jsProjectExternalUrl":"http://nftkit-js:80",
   "fallbackAuthorizationMode": "SIOP",
   "claimConfig": {
     "vc_mappings": [
