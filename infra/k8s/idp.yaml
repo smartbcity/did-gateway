@@ -5,14 +5,14 @@ metadata:
 data:
   verifier-config.json: |
     {
-      "verifierUiUrl": "http://idpkit:8091/sharecredential?state=",
-      "verifierApiUrl": "http://idpkit:8091/api/siop/default",
+      "verifierUiUrl": "http://idp.c2jn:8091/sharecredential?state=",
+      "verifierApiUrl": "http://idp.c2jn:8091/api/siop/default",
       "additionalPolicies": [
       ],
       "wallets": {
         "walt.id": {
           "id": "walt.id",
-          "url": "http://walletkit:8092",
+          "url": "http://wallet.c2jn:8092",
           "presentPath": "api/siop/initiatePresentation/",
           "receivePath" : "api/siop/initiateIssuance/",
           "description": "walt.id web wallet"
@@ -21,130 +21,55 @@ data:
     }
   idp-config.json: |
     {
-      "externalUrl": "http://idpkit:8091",
-        "jsProjectExternalUrl":"http://localhost:80",
-        "claimConfig": {
+      "externalUrl": "http://idp.c2jn:8091",
+      "fallbackAuthorizationMode": "SIOP",
+      "claimConfig": {
         "vc_mappings": [
-          {
-            "scope": [ "gaiax" ],
-            "claim": "name",
-            "credentialType": "ParticipantCredential",
-            "valuePath": "$.credentialSubject.hasLegallyBindingName"
-          },
-          {
-            "scope": [ "gaiax" ],
-            "claim": "country",
-            "credentialType": "LegalPerson",
-            "valuePath": "$.credentialSubject.gx-participant:legalAddress.gx-participant:addressCountryCode"
-          },
-          {
-            "scope": [ "gaiax" ],
-            "claim": "name",
-            "credentialType": "ParticipantCredential",
-            "valuePath": "$.credentialSubject.hasLegallyBindingName"
-          },
           {
             "scope": [ "profile" ],
             "claim": "name",
-            "credentialType": "VerifiableId",
+            "credentialType": "ConnectIdCredential",
             "valuePath": "$.credentialSubject.firstName $.credentialSubject.familyName"
           },
           {
             "scope": [ "profile" ],
             "claim": "family_name",
-            "credentialType": "VerifiableId",
+            "credentialType": "ConnectIdCredential",
             "valuePath": "$.credentialSubject.familyName"
           },
           {
             "scope": [ "profile" ],
             "claim": "given_name",
-            "credentialType": "VerifiableId",
+            "credentialType": "ConnectIdCredential",
             "valuePath": "$.credentialSubject.firstName"
           },
           {
             "scope": [ "profile" ],
-            "claim": "gender",
-            "credentialType": "VerifiableId",
-            "valuePath": "$.credentialSubject.gender"
-          },
-          {
-            "scope": [ "profile" ],
-            "claim": "birthdate",
-            "credentialType": "VerifiableId",
-            "valuePath": "$.credentialSubject.dateOfBirth"
-          },
-          {
-            "scope": [ "address" ],
-            "claim": "address",
-            "credentialType": "VerifiableId",
-            "valuePath": "$.credentialSubject.currentAddress[0]"
+            "claim": "userEmail",
+            "credentialType": "ConnectIdCredential",
+            "valuePath": "$.credentialSubject.email"
           }
         ],
-        "nft_mappings":  [
-          {
-            "scope": [ "award" ],
-            "claim": "awd",
-            "claimMappings": {
-              "EVM": {
-                "nftTokenConstraint": {
-                  "chain": "POLYGON",
-                  "smartContractAddress": "0x9bc4d80c7b77ecc7107eac3961cb1dd98930f2b2",
-                  "factorySmartContractAddress": ""
-                },
-                "trait": "award"
+        "default_vp_token_claim": {
+          "presentation_definition": {
+            "id": "1",
+            "input_descriptors": [
+              {
+                "id": "1",
+                "constraints": {
+                  "fields": [
+                    {
+                      "id": "1",
+                      "path": [ "$.type" ],
+                      "filter": { "const":  "ConnectIdCredential" }
+                    }
+                  ]
+                }
               }
-            }
+            ]
           }
-        ],
-        "default_nft_token_claim": {
-          "ecosystems": [ "EVM", "TEZOS", "NEAR" ],
-          "nftTokenContraints": {
-            "EVM": {
-              "chain": "POLYGON",
-              "factorySmartContractAddress": "",
-              "smartContractAddress": "0x21dd9b1913d84ab295fdf19834b0b6824a5912ca",
-              "collectionPath": ""
-            },
-            "TEZOS": {
-              "chain": "GHOSTNET",
-              "factorySmartContractAddress": "",
-              "smartContractAddress": "KT1Rc59ukgW32e54aUdYqVzTM9gtHrA4JDYp",
-              "collectionPath": ""
-            },
-            "NEAR": {
-              "chain": "TESTNET",
-              "factorySmartContractAddress": "",
-              "smartContractAddress": "demo.khaled_lightency1.testnet",
-              "collectionPath": ""
-            },
-          "POLKADOT": {
-            "chain": "OPAL",
-            "factorySmartContractAddress": "",
-            "smartContractAddress": "1062",
-            "collectionPath": ""
-
-
-          },
-          "FLOW": {
-            "chain": "TESTNET",
-            "factorySmartContractAddress": "",
-            "smartContractAddress": "0xa9ccb9756a0ee7eb",
-            "collectionPath": "/public/exampleNFTCollection"
-          }
-          }
-        },
-        "default_nft_policy":{
-          "withPolicyVerification": false,
-          "policy": "",
-          "query": "",
-          "inputs": {
-              "Backgrounds": "Green"
-          }
+        }
       }
-      }
-    }
-  nft-config.json: |
-    {
     }
 ---
 kind: Deployment
@@ -180,12 +105,6 @@ spec:
           args:
             - run
             - --bind-all
-#            uncomment to init client
-#            - config
-#            - --oidc
-#            - clients
-#            - register
-#            - --all-redirect-uris
           ports:
             - containerPort: 8080
               name: http-api
@@ -195,16 +114,17 @@ spec:
             name: idp-config
         - name: idp-data
           persistentVolumeClaim:
-            claimName: idp-data-volume-claim
+            claimName: nfs-smartbe-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: idpkit
+  name: idp
 spec:
   selector:
     app: idpkit
   ports:
     - port: 8091
       targetPort: 8080
-  type: LoadBalancer
+      nodePort: 32091
+  type: NodePort

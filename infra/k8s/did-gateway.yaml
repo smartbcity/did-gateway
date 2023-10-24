@@ -20,23 +20,23 @@ spec:
           imagePullPolicy: Always
           env:
             - name: IDP_URL
-              value: "http://idpkit:8091"
+              value: "http://idp.c2jn:8091"
             - name: IDP_CLIENT-ID
-              value: "gmFCjHus-IMs1fbZ24fMQP7-Bb78UC-tV8DvzmQac30"
+              value: "GrXy70h631VFlNh-EVwLfnnmj9P7aEO1WIqfMSv5z_o"
             - name: IDP_CLIENT-SECRET
-              value: "6qI6eH5sT3AEj_Cu2CIg0lvgqlcK8_8T8bJdlLSJ-KQ"
+              value: "85NWPTXO8k8wgFvcwY4ObnOGABgpK4WmzAxfFEO51zI"
             - name: WALLET_URL
-              value: "http://walletkit:8092"
+              value: "http://wallet.c2jn:8092"
             - name: ISSUER_URL
-              value: "http://walletkit:8092"
+              value: "http://wallet.c2jn:8092"
             - name: TARGET-IDP_URL
-              value: "http://host.minikube.internal:8080"
+              value: "http://keycloak.c2jn:8080"
             - name: TARGET-IDP_REALM
-              value: "test"
+              value: "server"
             - name: TARGET-IDP_CLIENT-ID
-              value: "test-client"
+              value: "token-exchange"
             - name: TARGET-IDP_CLIENT-SECRET
-              value: "***REMOVED***"
+              value: "YdbPUg9WTtGbpnLJcDkBLZxXOkgygOUn"
           ports:
             - containerPort: 8090
               name: http-api
@@ -51,4 +51,5 @@ spec:
   ports:
     - port: 8090
       targetPort: 8090
-  type: LoadBalancer
+      nodePort: 32090
+  type: NodePort

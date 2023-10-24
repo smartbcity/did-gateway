@@ -5,13 +5,13 @@ metadata:
 data:
   issuer-config.json: |
     {
-      "issuerUiUrl": "http://walletkit:8092",
-      "issuerApiUrl": "http://walletkit:8092/issuer-api/default",
+      "issuerUiUrl": "http://wallet.c2jn:8092",
+      "issuerApiUrl": "http://wallet.c2jn:8092/issuer-api/default",
       "credentialTypes": [ "VerifiableId" ],
       "wallets": {
         "waltid": {
           "id": "waltid",
-          "url": "http://walletkit:8092",
+          "url": "http://wallet.c2jn:8092",
           "presentPath": "api/siop/initiatePresentation/",
           "receivePath" : "api/siop/initiateIssuance/",
           "description": "walt.id web wallet"
@@ -21,12 +21,12 @@ data:
 
   verifier-config.json: |
     {
-      "verifierUiUrl": "http://walletkit:8092",
-      "verifierApiUrl": "http://walletkit:8092/verifier-api/default",
+      "verifierUiUrl": "http://wallet.c2jn:8092",
+      "verifierApiUrl": "http://wallet.c2jn:8092/verifier-api/default",
       "wallets": {
         "walt.id": {
           "id": "walt.id",
-          "url": "http://walletkit:8092",
+          "url": "http://wallet.c2jn:8092",
           "presentPath": "api/siop/initiatePresentation/",
           "receivePath" : "api/siop/initiateIssuance/",
           "description": "walt.id web wallet"
@@ -37,11 +37,11 @@ data:
   wallet-config.json: |
     {
       "walletUiUrl": "http://localhost:3000",
-      "walletApiUrl": "http://walletkit:8092/api",
+      "walletApiUrl": "http://wallet.c2jn:8092/api",
       "issuers": {
         "waltid": {
           "id": "waltid",
-          "url": "http://walletkit:8092/issuer-api/default/oidc",
+          "url": "http://wallet.c2jn:8092/issuer-api/default/oidc",
           "description": "walt.id Issuer Portal"
         }
       }
@@ -90,16 +90,17 @@ spec:
             name: wallet-config
         - name: wallet-data
           persistentVolumeClaim:
-            claimName: wallet-data-volume-claim
+            claimName: nfs-smartbe-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: walletkit
+  name: wallet
 spec:
   selector:
     app: walletkit
   ports:
     - port: 8092
       targetPort: 8080
-  type: LoadBalancer
+      nodePort: 32092
+  type: NodePort
