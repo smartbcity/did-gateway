@@ -29,4 +29,10 @@ open class TokenHelperEndpoint(
     fun issueCredential(@RequestBody command: IssueCredentialCommand): String {
         return issuerService.issue(command)
     }
+
+    @GetMapping("/credentials/get")
+    fun getCredentials(@RequestParam userId: String): String {
+        return tokenHelperService.getCredentials(userId)
+    }
+
 }

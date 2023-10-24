@@ -291,4 +291,22 @@ class TokenHelperService(
 
         return VerifiableCredential.fromString(Gson().toJson(vc))
     }
+
+    fun getCredentials(userId: String): String {
+        val walletAddress = tokenHelperConfig.walletUrl
+        val authToken = getWalletAuthToken(userId)
+
+        val walletGetCredentials = HttpRequest.newBuilder()
+            .uri(URI.create(String.format("${walletAddress}/api/wallet/credentials/list")))
+            .GET()
+            .header("Authorization", "Bearer $authToken")
+            .build()
+
+        val walletGetCredentialsResponse: HttpResponse<String> = HTTP_CLIENT.send(
+            walletGetCredentials,
+            HttpResponse.BodyHandlers.ofString()
+        )
+
+        return walletGetCredentialsResponse.body()
+    }
 }
