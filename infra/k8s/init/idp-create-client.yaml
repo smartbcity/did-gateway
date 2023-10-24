@@ -30,4 +30,4 @@ spec:
       volumes:
         - name: idp-data
           persistentVolumeClaim:
-            claimName: idp-data-volume-claim
+            claimName: nfs-smartbe-pvc
