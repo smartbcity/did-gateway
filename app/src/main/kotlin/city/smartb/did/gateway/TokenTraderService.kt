@@ -82,7 +82,7 @@ class TokenTraderService(
             TokenResponse::class.java
         ).accessToken
 
-        if (accessToken == null) return "access token could not be exchanged"
+        if (accessToken == null) return requestResponse.body()
 
         return accessToken
     }
