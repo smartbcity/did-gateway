@@ -5,24 +5,6 @@
   "claimConfig": {
     "vc_mappings": [
       {
-        "scope": [ "gaiax" ],
-        "claim": "name",
-        "credentialType": "ParticipantCredential",
-        "valuePath": "$.credentialSubject.hasLegallyBindingName"
-      },
-      {
-        "scope": [ "gaiax" ],
-        "claim": "country",
-        "credentialType": "LegalPerson",
-        "valuePath": "$.credentialSubject.gx-participant:legalAddress.gx-participant:addressCountryCode"
-      },
-      {
-        "scope": [ "gaiax" ],
-        "claim": "name",
-        "credentialType": "ParticipantCredential",
-        "valuePath": "$.credentialSubject.hasLegallyBindingName"
-      },
-      {
         "scope": [ "profile" ],
         "claim": "name",
         "credentialType": "ConnectIdCredential",
@@ -47,67 +29,6 @@
         "valuePath": "$.credentialSubject.email"
       }
     ],
-    "nft_mappings":  [
-      {
-        "scope": [ "award" ],
-        "claim": "awd",
-        "claimMappings": {
-          "EVM": {
-            "nftTokenConstraint": {
-              "chain": "POLYGON",
-              "smartContractAddress": "0x9bc4d80c7b77ecc7107eac3961cb1dd98930f2b2",
-              "factorySmartContractAddress": ""
-            },
-            "trait": "award"
-          }
-        }
-      }
-    ],
-    "default_nft_token_claim": {
-      "ecosystems": [ "EVM", "TEZOS", "NEAR" ],
-      "nftTokenContraints": {
-        "EVM": {
-          "chain": "POLYGON",
-          "factorySmartContractAddress": "",
-          "smartContractAddress": "0x21dd9b1913d84ab295fdf19834b0b6824a5912ca",
-          "collectionPath": ""
-        },
-        "TEZOS": {
-          "chain": "GHOSTNET",
-          "factorySmartContractAddress": "",
-          "smartContractAddress": "KT1Rc59ukgW32e54aUdYqVzTM9gtHrA4JDYp",
-          "collectionPath": ""
-        },
-        "NEAR": {
-          "chain": "TESTNET",
-          "factorySmartContractAddress": "",
-          "smartContractAddress": "demo.khaled_lightency1.testnet",
-          "collectionPath": ""
-        },
-        "POLKADOT": {
-          "chain": "OPAL",
-          "factorySmartContractAddress": "",
-          "smartContractAddress": "1062",
-          "collectionPath": ""
-
-
-        },
-        "FLOW": {
-          "chain": "TESTNET",
-          "factorySmartContractAddress": "",
-          "smartContractAddress": "0xa9ccb9756a0ee7eb",
-          "collectionPath": "/public/exampleNFTCollection"
-        }
-      }
-    },
-    "default_nft_policy":{
-      "withPolicyVerification": false,
-      "policy": "",
-      "query": "",
-      "inputs": {
-        "Backgrounds": "Green"
-      }
-    },
     "default_vp_token_claim": {
       "presentation_definition": {
         "id": "1",
