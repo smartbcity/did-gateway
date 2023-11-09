@@ -22,9 +22,9 @@ spec:
             - name: IDP_URL
               value: "http://idp.c2jn:8091"
             - name: IDP_CLIENT-ID
-              value: "GrXy70h631VFlNh-EVwLfnnmj9P7aEO1WIqfMSv5z_o"
+              value: "ztwxUw4ZE0uxDwoxfvrond517BDMO60yEbtmTF1mocc"
             - name: IDP_CLIENT-SECRET
-              value: "85NWPTXO8k8wgFvcwY4ObnOGABgpK4WmzAxfFEO51zI"
+              value: "ho1feqg5plQvWqhZEQ8GF5lbgIRWInv1CVUGnKaCLGI"
             - name: WALLET_URL
               value: "http://wallet.c2jn:8092"
             - name: ISSUER_URL
@@ -32,11 +32,11 @@ spec:
             - name: TARGET-IDP_URL
               value: "http://keycloak.c2jn:8080"
             - name: TARGET-IDP_REALM
-              value: "server"
+              value: "smartb"
             - name: TARGET-IDP_CLIENT-ID
               value: "token-exchange"
             - name: TARGET-IDP_CLIENT-SECRET
-              value: "YdbPUg9WTtGbpnLJcDkBLZxXOkgygOUn"
+              value: "dcsaBAt6oJZeUOn8MrHFcrCcT6WlDomv"
           ports:
             - containerPort: 8090
               name: http-api

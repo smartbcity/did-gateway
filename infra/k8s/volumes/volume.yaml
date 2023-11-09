@@ -1,7 +1,30 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"PersistentVolume","metadata":{"annotations":{},"name":"nfs-smartb-pv"},"spec":{"accessModes":["ReadWriteMany"],"capacity":{"storage":"100Gi"},"mountOptions":["nfsvers=4.0"],"nfs":{"path":"/srv/nfs/smartb","server":"192.168.2.3"}}}
+    pv.kubernetes.io/bound-by-controller: "yes"
+  finalizers:
+    - kubernetes.io/pv-protection
+  name: nfs-smartb-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 100Gi
+  mountOptions:
+    - nfsvers=4.0
+  nfs:
+    path: /srv/nfs/smartb
+    server: 192.168.2.3
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nfs-smartbe-pvc
+  name: nfs-smartb-pvc
 spec:
   accessModes:
     - ReadWriteMany
@@ -9,4 +32,4 @@ spec:
   resources:
     requests:
       storage: 100Gi
-  volumeName: nfs-smartbe-pv
+  volumeName: nfs-smartb-pv

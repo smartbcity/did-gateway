@@ -28,25 +28,25 @@ data:
           {
             "scope": [ "profile" ],
             "claim": "name",
-            "credentialType": "ConnectIdCredential",
+            "credentialType": "C2jnIDCredential",
             "valuePath": "$.credentialSubject.firstName $.credentialSubject.familyName"
           },
           {
             "scope": [ "profile" ],
             "claim": "family_name",
-            "credentialType": "ConnectIdCredential",
+            "credentialType": "C2jnIDCredential",
             "valuePath": "$.credentialSubject.familyName"
           },
           {
             "scope": [ "profile" ],
             "claim": "given_name",
-            "credentialType": "ConnectIdCredential",
+            "credentialType": "C2jnIDCredential",
             "valuePath": "$.credentialSubject.firstName"
           },
           {
             "scope": [ "profile" ],
             "claim": "userEmail",
-            "credentialType": "ConnectIdCredential",
+            "credentialType": "C2jnIDCredential",
             "valuePath": "$.credentialSubject.email"
           }
         ],
@@ -61,7 +61,7 @@ data:
                     {
                       "id": "1",
                       "path": [ "$.type" ],
-                      "filter": { "const":  "ConnectIdCredential" }
+                      "filter": { "const":  "C2jnIDCredential" }
                     }
                   ]
                 }
@@ -97,6 +97,7 @@ spec:
               readOnly: true
             - mountPath: "/waltid/idp/data/"
               name: idp-data
+              subPath: idp
           env:
             - name: WALTID_DATA_ROOT
               value: "/waltid/idp"
@@ -114,7 +115,7 @@ spec:
             name: idp-config
         - name: idp-data
           persistentVolumeClaim:
-            claimName: nfs-smartbe-pvc
+            claimName: nfs-smartb-pvc
 ---
 apiVersion: v1
 kind: Service

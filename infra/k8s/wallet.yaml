@@ -66,13 +66,14 @@ spec:
     spec:
       containers:
         - name: walletkit
-          image: smartbcity/smartb-wallet:0.0.1
+          image: smartbcity/smartb-wallet:0.0.2
           volumeMounts:
             - name: wallet-config
               mountPath: "/waltid/wallet/config/"
               readOnly: true
             - mountPath: "/waltid/wallet/data/"
               name: wallet-data
+              subPath: wallet
           env:
             - name: WALTID_DATA_ROOT
               value: "/waltid/wallet"
@@ -90,7 +91,7 @@ spec:
             name: wallet-config
         - name: wallet-data
           persistentVolumeClaim:
-            claimName: nfs-smartbe-pvc
+            claimName: nfs-smartb-pvc
 ---
 apiVersion: v1
 kind: Service

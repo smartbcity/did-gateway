@@ -13,6 +13,7 @@ spec:
           volumeMounts:
             - mountPath: "/waltid/idp/data/"
               name: idp-data
+              subPath: idp
           env:
             - name: WALTID_DATA_ROOT
               value: "/waltid/idp"
@@ -30,4 +31,4 @@ spec:
       volumes:
         - name: idp-data
           persistentVolumeClaim:
-            claimName: nfs-smartbe-pvc
+            claimName: nfs-smartb-pvc
