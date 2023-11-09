@@ -1,44 +1,99 @@
 # Decentralized Identifiers
 
-What are DIDs ? How can we use it ? What does it improve ?
-Describe DID and give a DID document example
-
 Decentralized identifiers (DIDs) are a new type of identifier that enables verifiable, decentralized digital identity. A DID refers to any subject (e.g., a person, organization, thing, data model, abstract entity, etc.) as determined by the controller of the DID. In contrast to typical, federated identifiers, DIDs have been designed so that they may be decoupled from centralized registries, identity providers, and certificate authorities. Specifically, while other parties might be used to help enable the discovery of information related to a DID, the design enables the controller of a DID to prove control over it without requiring permission from any other party. DIDs are URIs that associate a DID subject with a DID document allowing trustable interactions associated with that subject.
 
 Each DID document can express cryptographic material, verification methods, or services, which provide a set of mechanisms enabling a DID controller to prove control of the DID. Services enable trusted interactions associated with the DID subject. A DID might provide the means to return the DID subject itself, if the DID subject is an information resource such as a data model.
 
-# Verifiable Credentials
+Here are a few key things to know about DIDs:
 
-What are VCs ? How can we use it ? What does it improve ?
+- DIDs are unique identifiers that do not require a central authority to issue or manage them. They are generated and managed by the entities themselves or their delegates.
+- DIDs resolve to DID documents which contain metadata about the entity, including public keys, service endpoints, verifiable credentials, etc. This allows the entity to prove control over the DID.
+- DIDs and DID documents are stored on decentralized networks like blockchains or IPFS. This removes the need for centralized registries.
+- DIDs support cryptographic verification of signed claims via public/private key pairs. This enables trustworthy interactions between entities without centralized intermediaries.
+- DID methods specify the set of rules for how DIDs are created, resolved, updated, revoked, etc on a specific decentralized network. Some examples are DIDs on Bitcoin or Ethereum blockchains.
+- DIDs combined with verifiable credentials allow portable digital identity that is privacy-preserving and gives users more control over their data.
 
-Verifiable Credentials are a way to express information about a subject. This information is encapsulated in a Verifiable Credentials, which provides integrity and security.
-- A claim about a subject
-- Issued from an issuer to a subject
-- Cryptographically verifiable with the issuer public keys
+In summary, DIDs are a foundational technology for decentralized, self-sovereign digital identity on the web. They remove reliance on centralized authorities and increase user privacy and security.
 
-Describe VC, give an example
-
-
-C2jnIDCredential:
+DID Document example:
 ```
 {
-  "type": [
-    "VerifiableCredential",
-    "C2jnIDCredential"
+  "@context": "https://www.w3.org/ns/did/v1",
+  "id": "did:example:123456789abcdefghijk",
+  "verificationMethod": [
+    {
+      "id": "did:example:123456789abcdefghijk#keys-1",
+      "type": "Ed25519VerificationKey2018",
+      "controller": "did:example:123456789abcdefghijk",
+      "publicKeyBase58": "H3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV" 
+    }
   ],
+  "authentication": [
+    "did:example:123456789abcdefghijk#keys-1"
+  ],
+  "assertionMethod": [
+    "did:example:123456789abcdefghijk#keys-1"
+  ],
+  "service": [
+    {
+      "id":"did:example:123456789abcdefghijk#vcs",
+      "type": "VerifiableCredentialService",
+      "serviceEndpoint": "https://example.com/vc/"
+    }
+  ]
+}
+```
+
+The main properties are:
+
+- **id**: The unique DID itself
+- **verificationMethod**: The public keys that can verify digital signatures from this DID
+- **authentication**: Reference to the public key used for authentication
+- **assertionMethod**: Reference to the public key used for making verifiable claims
+- **service**: Service endpoints related to this DID (e.g. verifiable credential endpoint)
+
+This shows how a DID document contains the metadata necessary to use a DID and its associated keys.
+
+
+# Verifiable Credentials
+
+Verifiable credentials are tamper-evident credentials that have authorship that can be cryptographically verified. They contain claims about a subject that the issuer signs with their private key. The basic components are:
+
+- Claims: Information about the subject like name, birthdate, qualifications, etc.
+- Metadata: Information about the credential like issuer, issuance date, expiration date.
+- Signature: Cryptographic proof that the issuer generated the credential. This can be verified through the issuer's public key.
+
+Verifiable credentials can represent digital versions of real-world documentation like driver's licenses, university degrees, and more. The key benefit is that the claims can be cryptographically verified since the credential is digitally signed. This proves the issuer endorsed the claims.
+
+Verifiable credentials enable portable, privacy-preserving digital identity. Anyone can verify the claims but the raw data doesn't need to be revealed. Standards like W3C Verifiable Credentials and Decentralized Identifiers (DIDs) enable interoperability.
+
+In summary, verifiable credentials allow trusted transmission of verified claims about a subject. They are a core component of decentralized, self-sovereign digital identity.
+
+Verifiable credential example:
+
+```
+{
   "@context": [
-    "https://www.w3.org/2018/credentials/v1"
+    "https://www.w3.org/2018/credentials/v1",
+    "https://www.w3.org/2018/credentials/examples/v1"
   ],
-  "id": "urn:uuid:de394eb9-22a5-44d9-9244-f753f47c1151",
-  "issuer": "did:key:z6MkeVvjzLGGohLoUMueUauwZ5pGm2o2KhMZRngzTfK7BLuT",
-  "issuanceDate": "2023-10-10T14:53:03Z",
-  "issued": "2023-10-10T14:53:03Z",
-  "validFrom": "2023-10-10T14:53:03Z",
+  "id": "http://example.gov/credentials/3732",
+  "type": ["VerifiableCredential", "UniversityDegreeCredential"],
+  "issuer": "did:example:76e12ec712ebc6f1c221ebfeb1f",
+  "issuanceDate": "2010-01-01T19:23:24Z",
   "credentialSubject": {
-    "id": "did:key:z6Mktj3MJ3qKogeZeiBn3m16sJSYhf9LcNuwYNGaigLH5oip",
-    "familyName": "Le",
-    "firstName": "Teddy",
-    "email": "teddy@smartb.city"
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "degree": {
+      "type": "BachelorDegree", 
+      "name": "Bachelor of Science in Mechanical Engineering"
+    }
+  },
+  "proof": {
+    "type": "Ed25519Signature2018",
+    "created": "2017-06-18T21:19:10Z",
+    "proofPurpose": "assertionMethod", 
+    "verificationMethod": "did:example:ebfeb1f712ebc6f1c276e12ec21#keys-1",
+    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjc77uceq2BMRXejc7iDLpa0tXrEEUMm
   }
 }
 ```
@@ -46,13 +101,23 @@ C2jnIDCredential:
 
 # Authenticate with Verifiable Credentials
 
-How can we authenticate using DID/VC ? What does it improve ?
-Describe how can we use DID/VC to authenticate
+Here are some of the main benefits of using Decentralized Identifiers (DIDs) and Verifiable Credentials (VCs) for authentication:
 
--> improves privacy as personal data are not shared among every identity provider
--> lower falsification
+- User control: Users control their digital identities via their DIDs and can share only select VCs as needed.
+- Minimal disclosure: Users only have to share the specific claims required, not their full identity data.
+- Portability: Credentials are not tied to any specific service provider, allowing portable digital identity.
+- Privacy: DIDs and VCs enhance privacy since zero knowledge proofs can be used to share claims without revealing raw data.
+- Security: Cryptographic proofs verify the validity of claims and credentials. Harder to fake identities.
+- Trust: VCs are provably issued by trusted authorities and tamper-evident using digital signatures.
+- Low friction: DIDs linked to wallets allow fast, secure, passwordless authentication.
+- Interoperability: Standards like W3C DID/VC enable interoperability across different systems.
+- Cost efficiency: Avoid costs of centralized identity and credential issuance systems.
+
+Overall, DIDs and VCs provide user-centric digital identity where users control their data sharing. The cryptographic verifiability also builds trust while enhancing security and privacy. This makes DIDs and VCs useful for decentralized authentication.
 
 # Implementation
+
+TODO complete intro
 
 Description
 
@@ -66,8 +131,31 @@ Which projects/technologies does it use ?
 Using utility library, wallet and identity provider from WaltID.
 
 SmartB:
-- Iris: DID resolver/registrar, provides functions to create and use DID, create, sign and verify verifable credentials. Directly plugged into a SmartB blockchain
+- Iris: DID resolver/registrar, provides functions to create and use DID, create, sign and verify verifiable credentials. Directly plugged into a SmartB blockchain
 - Vault: storage for cryptographic keys
+
+
+Purpose of this project
+
+Provides all the components to build a decentralized authentication system
+It is designed to be used within M2M interactions
+
+
+
+components list:
+  
+
+
+Integration of wallet and self-sovereign identity provider of WaltID.
+
+Development of DID Gateway:
+ - describe did gateway
+ - purpose: do programmatically what is normally done by a human physically
+
+Keycloak
+  - describe keycloak
+
+The implementation follow as much as possible the specifications link-to-specs
 
 
 ## Setup
@@ -271,7 +359,7 @@ curl --location 'https://wallet.did.smart-b.io/api/auth/login' \
 ```
 
 
-# Architecture concerns
+# Architecture
 
 For implementations reasons and ease of use, the current architecture uses a centralized model.
 
@@ -354,7 +442,8 @@ More configuration steps have to be done. Particularly, the Keycloak of the secu
 - Add a keycloak to k8s infrastructure (or use EGM one's) and configure did-gateway according to the deployed keycloak instance
 - Add authentication to wallet (it currently needs only a userId to authentify a user)
 - Token exchange currently works by disabling signature verification (cause private network), re-enable it
-- Complete "Decentralized Identifiers", "Verifiable Credentials", "Authenticate with Verifiable Credentials"
+- Complete "Implementation"
+- Integrate Iris and SmartB blockchain
 
 
 ### Example token exchange
